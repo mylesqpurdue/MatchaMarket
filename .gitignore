@@ -1,0 +1,59 @@
+# Python virtual environment
+venv/
+env/
+ENV/
+.env
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Model files and cache
+models/*.pkl
+*.pkl
+.cache/
+.pytest_cache/
+
+# Logs
+logs/
+*.log
+
+# Local configuration
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Data files
+*.csv
+*.json
+*.xlsx
+*.xls
+
+# Temporary files
+tmp/
+temp/
+
+# Dash specific
+.dash_debug.log
