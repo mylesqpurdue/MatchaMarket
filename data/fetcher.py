@@ -21,20 +21,7 @@ class StockDataFetcher:
     
     def get_stock_chart(self, symbol, interval='1d', range='1mo', region='US', 
                         include_pre_post=False, include_adjusted_close=True):
-        """
-        Fetch stock chart data from Yahoo Finance.
         
-        Args:
-            symbol (str): Stock symbol (e.g., 'AAPL')
-            interval (str): Time interval between data points ('1m', '2m', '5m', '15m', '30m', '60m', '1d', '1wk', '1mo')
-            range (str): Date range for data ('1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max')
-            region (str): Region code ('US', 'BR', 'AU', 'CA', 'FR', 'DE', 'HK', 'IN', 'IT', 'ES', 'GB', 'SG')
-            include_pre_post (bool): Whether to include pre/post market data
-            include_adjusted_close (bool): Whether to include adjusted close data
-            
-        Returns:
-            dict: Processed stock chart data or default data if error occurs
-        """
         # Create cache key
         cache_key = f"chart_{symbol}_{interval}_{range}_{region}_{include_pre_post}_{include_adjusted_close}"
         
@@ -127,15 +114,7 @@ class StockDataFetcher:
             return self._create_default_data(symbol)
             
     def _create_default_data(self, symbol):
-        """
-        Create default data when API call fails or returns invalid data.
-        
-        Args:
-            symbol (str): Stock symbol
-            
-        Returns:
-            dict: Default stock data
-        """
+
         # Create a date range for the last 30 days
         end_date = datetime.now()
         start_date = end_date - timedelta(days=30)
@@ -171,15 +150,6 @@ class StockDataFetcher:
         return result
     
     def get_stock_insights(self, symbol):
-        """
-        Fetch stock insights data from Yahoo Finance.
-        
-        Args:
-            symbol (str): Stock symbol
-            
-        Returns:
-            dict: Stock insights data
-        """
         # Create cache key
         cache_key = f"insights_{symbol}"
         
@@ -254,14 +224,6 @@ class StockDataFetcher:
             }
     
     def _cache_result(self, key, data, interval):
-        """
-        Cache the result with appropriate expiry time.
-        
-        Args:
-            key (str): Cache key
-            data (dict): Data to cache
-            interval (str): Time interval used in the request
-        """
         self.cache[key] = data
         
         # Set expiry time based on interval

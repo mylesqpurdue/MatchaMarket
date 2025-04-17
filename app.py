@@ -87,6 +87,15 @@ def update_stock_data(symbol, timeframe, interval, n_intervals):
         # Convert DataFrame index to string for JSON serialization
         df_dict = stock_data['data'].reset_index().to_dict('records')
         stock_data['data'] = df_dict
+        raw = stock_data['data']
+        if isinstance(raw, list):
+            # Already a list of dicts: assume it’s JSON-serializable already
+            df_dict = raw
+        else:
+            # It’s still a DataFrame: reset_index and serialize
+            df = raw.reset_index()
+            df_dict = df.to_dict('records')
+        stock_data['data'] = df_dict
     
     return stock_data
 
