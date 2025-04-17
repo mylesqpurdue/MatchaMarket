@@ -14,16 +14,13 @@ from dash import dcc, html, callback, Input, Output, State
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 
-# Add path for data API access
-sys.path.append('/opt/.manus/.sandbox-runtime')
-
 # Import dashboard components
 from layouts.main_layout import create_dashboard_layout
 from components.price_chart import create_candlestick_chart, create_line_chart, add_moving_averages, add_bollinger_bands
 from components.volume_chart import create_volume_chart
 from components.indicators import create_rsi_chart, create_macd_chart, create_stochastic_oscillator, calculate_rsi, calculate_macd
 from components.prediction import register_prediction_callbacks
-from data.fetcher import StockDataFetcher
+from data.fetcher_local import StockDataFetcher
 
 # Initialize the Dash app with Bootstrap theme
 app = dash.Dash(
@@ -174,6 +171,8 @@ def update_price_chart(stock_data, comparison_data, chart_type, indicators):
     df = pd.DataFrame(stock_data['data'])
     if 'datetime' in df.columns:
         df.set_index('datetime', inplace=True)
+    elif 'Datetime' in df.columns:
+        df.set_index('Datetime', inplace=True)
     
     # Reconstruct stock_data with DataFrame
     stock_data_with_df = stock_data.copy()
@@ -206,6 +205,8 @@ def update_price_chart(stock_data, comparison_data, chart_type, indicators):
             comp_df = pd.DataFrame(comp_data['data'])
             if 'datetime' in comp_df.columns:
                 comp_df.set_index('datetime', inplace=True)
+            elif 'Datetime' in comp_df.columns:
+                comp_df.set_index('Datetime', inplace=True)
             
             # Add comparison line
             fig.add_trace(go.Scatter(
@@ -245,6 +246,8 @@ def update_volume_chart(stock_data, indicators):
     df = pd.DataFrame(stock_data['data'])
     if 'datetime' in df.columns:
         df.set_index('datetime', inplace=True)
+    elif 'Datetime' in df.columns:
+        df.set_index('Datetime', inplace=True)
     
     # Reconstruct stock_data with DataFrame
     stock_data_with_df = stock_data.copy()
@@ -282,6 +285,8 @@ def update_rsi_chart(stock_data, indicators):
     df = pd.DataFrame(stock_data['data'])
     if 'datetime' in df.columns:
         df.set_index('datetime', inplace=True)
+    elif 'Datetime' in df.columns:
+        df.set_index('Datetime', inplace=True)
     
     # Reconstruct stock_data with DataFrame
     stock_data_with_df = stock_data.copy()
@@ -319,6 +324,8 @@ def update_macd_chart(stock_data, indicators):
     df = pd.DataFrame(stock_data['data'])
     if 'datetime' in df.columns:
         df.set_index('datetime', inplace=True)
+    elif 'Datetime' in df.columns:
+        df.set_index('Datetime', inplace=True)
     
     # Reconstruct stock_data with DataFrame
     stock_data_with_df = stock_data.copy()
@@ -356,6 +363,8 @@ def update_stochastic_chart(stock_data, indicators):
     df = pd.DataFrame(stock_data['data'])
     if 'datetime' in df.columns:
         df.set_index('datetime', inplace=True)
+    elif 'Datetime' in df.columns:
+        df.set_index('Datetime', inplace=True)
     
     # Reconstruct stock_data with DataFrame
     stock_data_with_df = stock_data.copy()
