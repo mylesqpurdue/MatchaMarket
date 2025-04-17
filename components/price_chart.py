@@ -8,6 +8,11 @@ def create_candlestick_chart(stock_data, title=None, height=600, show_volume=Tru
     df = stock_data['data']
     symbol = stock_data['symbol']
     currency = stock_data['currency']
+
+    if 'date' in df.columns:
+        df.index = pd.to_datetime(df['date'])
+    else:
+        df.index = pd.to_datetime(df.index)
     
     # Set up figure with secondary y-axis for volume if needed
     if show_volume:
@@ -76,51 +81,61 @@ def create_candlestick_chart(stock_data, title=None, height=600, show_volume=Tru
     else:
         fig.update_yaxes(title_text="Price")
     
-    # Add buttons for time range selection
+     # … everything up to just before the updatemenus block …
+
+    # Compute safe look‐back indices
+    n = len(df)
+    start_1m  = df.index[max(n - 30,  0)]
+    start_3m  = df.index[max(n - 90,  0)]
+    start_6m  = df.index[max(n - 180, 0)]
+    # YTD is always Jan 1 of the first year
+    ytd_year  = df.index[0].year
+    start_ytd = df.index[0].replace(year=ytd_year, month=1, day=1)
+    start_1y  = df.index[max(n - 365, 0)]
+
+    # Now build the buttons using those safe values
     fig.update_layout(
-        updatemenus=[
-            dict(
-                type="buttons",
-                direction="right",
-                active=0,
-                x=0.1,
-                y=1.1,
-                buttons=list([
-                    dict(
-                        label="1M",
-                        method="relayout",
-                        args=[{"xaxis.range": [df.index[-30], df.index[-1]]}]
-                    ),
-                    dict(
-                        label="3M",
-                        method="relayout",
-                        args=[{"xaxis.range": [df.index[-90], df.index[-1]]}]
-                    ),
-                    dict(
-                        label="6M",
-                        method="relayout",
-                        args=[{"xaxis.range": [df.index[-180], df.index[-1]]}]
-                    ),
-                    dict(
-                        label="YTD",
-                        method="relayout",
-                        args=[{"xaxis.range": [df.index[0].replace(month=1, day=1), df.index[-1]]}]
-                    ),
-                    dict(
-                        label="1Y",
-                        method="relayout",
-                        args=[{"xaxis.range": [df.index[-365], df.index[-1]]}]
-                    ),
-                    dict(
-                        label="All",
-                        method="relayout",
-                        args=[{"xaxis.range": [df.index[0], df.index[-1]]}]
-                    )
-                ]),
-            )
-        ]
+        updatemenus=[{
+            "type": "buttons",
+            "direction": "right",
+            "active": 0,
+            "x": 0.1,
+            "y": 1.1,
+            "buttons": [
+                {
+                    "label": "1M",
+                    "method": "relayout",
+                    "args": [{"xaxis.range": [start_1m,   df.index[-1]]}]
+                },
+                {
+                    "label": "3M",
+                    "method": "relayout",
+                    "args": [{"xaxis.range": [start_3m,   df.index[-1]]}]
+                },
+                {
+                    "label": "6M",
+                    "method": "relayout",
+                    "args": [{"xaxis.range": [start_6m,   df.index[-1]]}]
+                },
+                {
+                    "label": "YTD",
+                    "method": "relayout",
+                    "args": [{"xaxis.range": [start_ytd,  df.index[-1]]}]
+                },
+                {
+                    "label": "1Y",
+                    "method": "relayout",
+                    "args": [{"xaxis.range": [start_1y,   df.index[-1]]}]
+                },
+                {
+                    "label": "All",
+                    "method": "relayout",
+                    "args": [{"xaxis.range": [df.index[0], df.index[-1]]}]
+                }
+            ]
+        }]
     )
-    
+
     return fig
 
 def create_line_chart(stock_data, title=None, height=500, use_adjclose=True):
