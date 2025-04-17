@@ -20,7 +20,7 @@ from components.price_chart import create_candlestick_chart, create_line_chart, 
 from components.volume_chart import create_volume_chart
 from components.indicators import create_rsi_chart, create_macd_chart, create_stochastic_oscillator, calculate_rsi, calculate_macd
 from components.prediction import register_prediction_callbacks
-from data.fetcher_local import StockDataFetcher
+from data.fetcher import StockDataFetcher
 
 # Initialize the Dash app with Bootstrap theme
 app = dash.Dash(

@@ -1,26 +1,9 @@
-"""
-Price chart component for the Stock Market Dashboard.
-This module provides functions to create interactive price charts using Plotly.
-"""
-
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 
 def create_candlestick_chart(stock_data, title=None, height=600, show_volume=True):
-    """
-    Create an interactive candlestick chart for stock price data.
-    
-    Args:
-        stock_data (dict): Processed stock data from the fetcher module
-        title (str, optional): Chart title
-        height (int, optional): Chart height in pixels
-        show_volume (bool, optional): Whether to include volume subplot
-        
-    Returns:
-        plotly.graph_objects.Figure: Interactive candlestick chart
-    """
     # Extract data
     df = stock_data['data']
     symbol = stock_data['symbol']
@@ -87,10 +70,11 @@ def create_candlestick_chart(stock_data, title=None, height=600, show_volume=Tru
         hovermode="x unified"
     )
     
-    # Update y-axis labels
-    fig.update_yaxes(title_text="Price", row=1, col=1)
     if show_volume:
+        fig.update_yaxes(title_text="Price",  row=1, col=1)
         fig.update_yaxes(title_text="Volume", row=2, col=1)
+    else:
+        fig.update_yaxes(title_text="Price")
     
     # Add buttons for time range selection
     fig.update_layout(
