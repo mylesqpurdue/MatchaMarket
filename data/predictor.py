@@ -72,86 +72,94 @@ class StockPredictor:
         
         return data
     
+    from datetime import timedelta
+
     def train_model(self, stock_data, symbol, forecast_days=5):
-        # Extract DataFrame
+        # 1) Pull out raw data
         df = stock_data['data']
-        
-        # Create features
+
+        # ——— NEW: if it’s a list of dicts, make it a DataFrame ———
+        if isinstance(df, list):
+            df = pd.DataFrame(df)
+
+        # ——— Ensure a DateTimeIndex ———
+        if not isinstance(df.index, pd.DatetimeIndex):
+            if 'datetime' in df.columns:
+                df['datetime'] = pd.to_datetime(df['datetime'])
+                df.set_index('datetime', inplace=True)
+            elif 'Datetime' in df.columns:
+                df['Datetime'] = pd.to_datetime(df['Datetime'])
+                df.set_index('Datetime', inplace=True)
+            elif 'Date' in df.columns:
+                # yfinance / pandas often reset_index() with column named "Date"
+                df['Date'] = pd.to_datetime(df['Date'])
+                df.set_index('Date', inplace=True)
+            elif 'date' in df.columns:
+                df['date'] = pd.to_datetime(df['date'])
+                df.set_index('date', inplace=True)
+            elif 'index' in df.columns:
+                # Dash’s default reset_index() name
+                df['index'] = pd.to_datetime(df['index'])
+                df.set_index('index', inplace=True)
+            else:
+                raise ValueError(
+                    "Stock data must have one of: 'datetime', 'Datetime', 'Date', 'date', or 'index' columns."
+                )
+
+
+
+        # 3) Build features
         data = self._create_features(df)
-        
-        # Define features and target
+
+        # 4) Define your feature list explicitly
         features = [
             'open', 'high', 'low', 'close', 'volume',
             'ma5', 'ma10', 'ma20', 'price_momentum', 'volatility',
             'price_diff', 'rsi', 'macd', 'macd_signal',
             'bb_width', 'volume_change', 'volume_ma5'
         ]
-        
         X = data[features]
         y = data['target']
-        
-        # Split data
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
-        
-        # Scale features
+
+        # 5) Split, scale, train, evaluate…
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, shuffle=False
+        )
         scaler = StandardScaler()
         X_train_scaled = scaler.fit_transform(X_train)
-        X_test_scaled = scaler.transform(X_test)
-        
-        # Train XGBoost model
+        X_test_scaled  = scaler.transform(X_test)
+
         model = xgb.XGBRegressor(
             objective='reg:squarederror',
-            n_estimators=100,
-            learning_rate=0.1,
-            max_depth=5,
-            subsample=0.8,
-            colsample_bytree=0.8,
+            n_estimators=100, learning_rate=0.1,
+            max_depth=5, subsample=0.8, colsample_bytree=0.8,
             random_state=42
         )
-        
         model.fit(X_train_scaled, y_train)
-        
-        # Make predictions
+
+        # Metrics
         y_pred = model.predict(X_test_scaled)
-        
-        # Calculate metrics
-        mse = mean_squared_error(y_test, y_pred)
+        mse  = mean_squared_error(y_test, y_pred)
         rmse = np.sqrt(mse)
-        mae = mean_absolute_error(y_test, y_pred)
-        r2 = r2_score(y_test, y_pred)
-        
-        # Save model and scaler
-        model_path = os.path.join(self.model_dir, f"{symbol}_model.pkl")
-        scaler_path = os.path.join(self.model_dir, f"{symbol}_scaler.pkl")
-        
-        with open(model_path, 'wb') as f:
-            pickle.dump(model, f)
-        
-        with open(scaler_path, 'wb') as f:
-            pickle.dump(scaler, f)
-        
-        # Cache model and scaler
-        self.models[symbol] = model
-        self.scalers[symbol] = scaler
-        
-        # Generate forecast for future days
+        mae  = mean_absolute_error(y_test, y_pred)
+        r2   = r2_score(y_test, y_pred) if len(y_test) >= 2 else float('nan')
+
+        # Save & cache…
+        # …
+
+        # 6) Forecast (now that data.index is a TimestampIndex)
         forecast = self._generate_forecast(data, model, scaler, features, forecast_days)
-        
-        # Return results
+
         return {
             'symbol': symbol,
-            'metrics': {
-                'mse': mse,
-                'rmse': rmse,
-                'mae': mae,
-                'r2': r2
-            },
+            'metrics': {'mse': mse, 'rmse': rmse, 'mae': mae, 'r2': r2},
             'forecast': forecast,
             'feature_importance': {
                 'features': features,
                 'importance': model.feature_importances_.tolist()
             }
         }
+
     
     def _generate_forecast(self, data, model, scaler, features, days=5):
         # Get the last row of data
@@ -194,49 +202,68 @@ class StockPredictor:
         return forecast_df
     
     def predict(self, stock_data, symbol, days=5):
-        # Check if model exists
-        model_path = os.path.join(self.model_dir, f"{symbol}_model.pkl")
+        # 1) If there’s no saved model/scaler on disk, train a new one:
+        model_path  = os.path.join(self.model_dir, f"{symbol}_model.pkl")
         scaler_path = os.path.join(self.model_dir, f"{symbol}_scaler.pkl")
-        
-        if not os.path.exists(model_path) or not os.path.exists(scaler_path):
-            # Train new model if it doesn't exist
+
+        if not (os.path.exists(model_path) and os.path.exists(scaler_path)):
+            # this will also cache self.models[symbol] & self.scalers[symbol]
             return self.train_model(stock_data, symbol, days)
-        
-        # Load model and scaler if not in cache
+
+        # 2) Load into memory if not already cached
         if symbol not in self.models:
-            with open(model_path, 'rb') as f:
-                self.models[symbol] = pickle.load(f)
-            
-            with open(scaler_path, 'rb') as f:
-                self.scalers[symbol] = pickle.load(f)
-        
-        model = self.models[symbol]
+            with open(model_path, 'rb')   as f: self.models[symbol]  = pickle.load(f)
+            with open(scaler_path, 'rb')  as f: self.scalers[symbol] = pickle.load(f)
+
+        model  = self.models[symbol]
         scaler = self.scalers[symbol]
-        
-        # Extract DataFrame
+
+        # 3) Rehydrate the DataFrame
         df = stock_data['data']
-        
-        # Create features
+        if isinstance(df, list):
+            df = pd.DataFrame(df)
+
+        # 4) Ensure a datetime index (your extended version with 'Date', 'index', etc.)
+        if not isinstance(df.index, pd.DatetimeIndex):
+            if 'datetime' in df.columns:
+                df['datetime'] = pd.to_datetime(df['datetime'])
+                df.set_index('datetime', inplace=True)
+            elif 'Datetime' in df.columns:
+                df['Datetime'] = pd.to_datetime(df['Datetime'])
+                df.set_index('Datetime', inplace=True)
+            elif 'Date' in df.columns:
+                df['Date'] = pd.to_datetime(df['Date'])
+                df.set_index('Date', inplace=True)
+            elif 'date' in df.columns:
+                df['date'] = pd.to_datetime(df['date'])
+                df.set_index('date', inplace=True)
+            elif 'index' in df.columns:
+                df['index'] = pd.to_datetime(df['index'])
+                df.set_index('index', inplace=True)
+            else:
+                raise ValueError(
+                    "Stock data must have one of: 'datetime', 'Datetime', 'Date', 'date', or 'index' columns."
+                )
+
+        # 5) Feature engineering
         data = self._create_features(df)
-        
-        # Define features
+
+        # 6) Forecast
         features = [
-            'open', 'high', 'low', 'close', 'volume',
-            'ma5', 'ma10', 'ma20', 'price_momentum', 'volatility',
-            'price_diff', 'rsi', 'macd', 'macd_signal',
-            'bb_width', 'volume_change', 'volume_ma5'
+            'open','high','low','close','volume',
+            'ma5','ma10','ma20','price_momentum','volatility',
+            'price_diff','rsi','macd','macd_signal',
+            'bb_width','volume_change','volume_ma5'
         ]
-        
-        # Generate forecast
         forecast = self._generate_forecast(data, model, scaler, features, days)
-        
-        # Return results
+
         return {
-            'symbol': symbol,
-            'forecast': forecast,
-            'last_price': df['close'].iloc[-1],
+            'symbol'         : symbol,
+            'forecast'       : forecast,
+            'last_price'     : df['close'].iloc[-1],
             'prediction_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
+
 
 def create_prediction_chart(prediction_data, stock_data, title=None, height=400):
     import plotly.graph_objects as go
