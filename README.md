@@ -25,12 +25,13 @@ cd stock-dashboard
 2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate or \venv\Scripts\Activate.ps1
 ```
 
 3. Install dependencies:
 ```bash
 pip install -r requirements.txt
+and another other depednacies need to run
 ```
 
 ## Usage
@@ -42,7 +43,7 @@ python app.py
 
 2. Open your browser and go to:
 ```
-http://localhost:8050
+http://localhost:8050 
 ```
 
 ## Dashboard Components
@@ -68,6 +69,7 @@ The dashboard includes an XGBoost-based prediction feature that:
 - `data/`: Data fetching and processing modules
   - `fetcher.py`: Stock data fetching with error handling
   - `predictor.py`: XGBoost prediction model
+  - `test_metrics`: Tests RSME 
 - `components/`: UI components
   - `price_chart.py`: Price chart visualizations
   - `volume_chart.py`: Volume chart visualizations
@@ -102,3 +104,4 @@ MIT
 - Yahoo Finance API for stock data
 - Dash and Plotly for interactive visualizations
 - XGBoost for machine learning predictions
+- All of my friends
