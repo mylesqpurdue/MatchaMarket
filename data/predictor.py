@@ -67,12 +67,12 @@ class StockPredictor:
         
         # Target variable (next day's closing price)
         data['target'] = data['close'].shift(-1)
+        
         #data['target'] = data['close'].pct_change().shift(-1)
         #FOR TESTING RSME
         
         # Drop NaN values
         data = data.dropna()
-        
         return data
     
 
@@ -170,10 +170,6 @@ class StockPredictor:
 
 
     def _generate_forecast(self, raw_df, model, scaler, features, days=5):
-        """
-        raw_df: a DataFrame with a proper DatetimeIndex and columns
-                ['open','high','low','close','volume',...]
-        """
         # 0) Pre‑flight
         if raw_df.empty:
             raise ValueError("Cannot forecast: raw_df is empty")
@@ -223,60 +219,61 @@ class StockPredictor:
         return forecast_df
     
     def predict(self, stock_data, symbol, days=5):
-        # 1) If there’s no saved model/scaler on disk, train a new one:
+        # Paths for saved model + scaler
         model_path  = os.path.join(self.model_dir, f"{symbol}_model.pkl")
         scaler_path = os.path.join(self.model_dir, f"{symbol}_scaler.pkl")
 
+        # If we don't yet have a model, train one (this also saves it to disk)
         if not (os.path.exists(model_path) and os.path.exists(scaler_path)):
-            # this will also cache self.models[symbol] & self.scalers[symbol]
             return self.train_model(stock_data, symbol, days)
 
-        # 2) Load into memory if not already cached
+        # Load into memory if not already cached
         if symbol not in self.models:
-            with open(model_path, 'rb')   as f: self.models[symbol]  = pickle.load(f)
-            with open(scaler_path, 'rb')  as f: self.scalers[symbol] = pickle.load(f)
+            with open(model_path,  'rb') as f: self.models[symbol]  = pickle.load(f)
+            with open(scaler_path, 'rb') as f: self.scalers[symbol] = pickle.load(f)
 
         model  = self.models[symbol]
         scaler = self.scalers[symbol]
 
-        # 3) Rehydrate the DataFrame
+        # Rehydrate the incoming data
         df = stock_data['data']
         if isinstance(df, list):
             df = pd.DataFrame(df)
 
-        # 4) Ensure a datetime index (your extended version with 'Date', 'index', etc.)
+        # Ensure a DateTimeIndex
         if not isinstance(df.index, pd.DatetimeIndex):
-            if 'datetime' in df.columns:
-                df['datetime'] = pd.to_datetime(df['datetime'])
-                df.set_index('datetime', inplace=True)
-            elif 'Datetime' in df.columns:
-                df['Datetime'] = pd.to_datetime(df['Datetime'])
-                df.set_index('Datetime', inplace=True)
-            elif 'Date' in df.columns:
-                df['Date'] = pd.to_datetime(df['Date'])
-                df.set_index('Date', inplace=True)
-            elif 'date' in df.columns:
-                df['date'] = pd.to_datetime(df['date'])
-                df.set_index('date', inplace=True)
-            elif 'index' in df.columns:
-                df['index'] = pd.to_datetime(df['index'])
-                df.set_index('index', inplace=True)
+            for col in ('datetime','Datetime','Date','date','index'):
+                if col in df.columns:
+                    df[col] = pd.to_datetime(df[col])
+                    df.set_index(col, inplace=True)
+                    break
             else:
                 raise ValueError(
-                    "Stock data must have one of: 'datetime', 'Datetime', 'Date', 'date', or 'index' columns."
+                    "Stock data must have one of: "
+                    "'datetime','Datetime','Date','date', or 'index' columns."
                 )
 
-        # 5) Feature engineering
-        data = self._create_features(df)
+        # (Optional) run through _create_features if you need to inspect indicators,
+        # but do NOT feed that into the forecast routine:
+        _ = self._create_features(df)
 
-        # 6) Forecast
+        # Define the exact same 18 features you used during training:
         features = [
+            'lag1',          # important: yesterday's close
             'open','high','low','close','volume',
             'ma5','ma10','ma20','price_momentum','volatility',
             'price_diff','rsi','macd','macd_signal',
             'bb_width','volume_change','volume_ma5'
         ]
-        forecast = self._generate_forecast(data, model, scaler, features, days)
+
+        # Generate a multi‑step forecast from the *raw* price/volume history
+        forecast = self._generate_forecast(
+            raw_df=df,
+            model=model,
+            scaler=scaler,
+            features=features,
+            days=days
+        )
 
         return {
             'symbol'         : symbol,
@@ -284,6 +281,7 @@ class StockPredictor:
             'last_price'     : df['close'].iloc[-1],
             'prediction_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
+
 
 
 def create_prediction_chart(prediction_data, stock_data, title=None, height=400):
