@@ -1,8 +1,3 @@
-"""
-Stock data fetcher module for the Stock Market Dashboard.
-This module provides functions to fetch and process stock data from Yahoo Finance.
-"""
-
 import sys
 import pandas as pd
 import numpy as np

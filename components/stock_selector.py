@@ -1,25 +1,9 @@
-"""
-Stock selector component for the Stock Market Dashboard.
-This module provides functions to create stock selection UI elements.
-"""
-
 import plotly.graph_objects as go
 import dash
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 
 def create_stock_selector(id='stock-selector', default_value='AAPL', popular_stocks=None):
-    """
-    Create a stock selector dropdown component.
-    
-    Args:
-        id (str, optional): Component ID
-        default_value (str, optional): Default stock symbol
-        popular_stocks (list, optional): List of popular stock symbols to include
-        
-    Returns:
-        dash component: Stock selector dropdown
-    """
     if popular_stocks is None:
         popular_stocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ']
     
@@ -49,16 +33,6 @@ def create_stock_selector(id='stock-selector', default_value='AAPL', popular_sto
     ], className='stock-selector-container')
 
 def create_timeframe_selector(id='timeframe-selector', default_value='1mo'):
-    """
-    Create a timeframe selector dropdown component.
-    
-    Args:
-        id (str, optional): Component ID
-        default_value (str, optional): Default timeframe
-        
-    Returns:
-        dash component: Timeframe selector dropdown
-    """
     timeframes = [
         {'label': '1 Day', 'value': '1d'},
         {'label': '5 Days', 'value': '5d'},
@@ -84,16 +58,6 @@ def create_timeframe_selector(id='timeframe-selector', default_value='1mo'):
     ], className='timeframe-selector-container')
 
 def create_interval_selector(id='interval-selector', default_value='1d'):
-    """
-    Create an interval selector dropdown component.
-    
-    Args:
-        id (str, optional): Component ID
-        default_value (str, optional): Default interval
-        
-    Returns:
-        dash component: Interval selector dropdown
-    """
     intervals = [
         {'label': '1 Minute', 'value': '1m'},
         {'label': '2 Minutes', 'value': '2m'},
@@ -118,16 +82,6 @@ def create_interval_selector(id='interval-selector', default_value='1d'):
     ], className='interval-selector-container')
 
 def create_chart_type_selector(id='chart-type-selector', default_value='candlestick'):
-    """
-    Create a chart type selector dropdown component.
-    
-    Args:
-        id (str, optional): Component ID
-        default_value (str, optional): Default chart type
-        
-    Returns:
-        dash component: Chart type selector dropdown
-    """
     chart_types = [
         {'label': 'Candlestick', 'value': 'candlestick'},
         {'label': 'Line', 'value': 'line'},
@@ -146,15 +100,6 @@ def create_chart_type_selector(id='chart-type-selector', default_value='candlest
     ], className='chart-type-selector-container')
 
 def create_indicator_selector(id='indicator-selector'):
-    """
-    Create a technical indicator selector component.
-    
-    Args:
-        id (str, optional): Component ID
-        
-    Returns:
-        dash component: Indicator selector checklist
-    """
     indicators = [
         {'label': 'Moving Average (20)', 'value': 'ma20'},
         {'label': 'Moving Average (50)', 'value': 'ma50'},
@@ -177,16 +122,6 @@ def create_indicator_selector(id='indicator-selector'):
     ], className='indicator-selector-container')
 
 def create_comparison_selector(id='comparison-selector', popular_stocks=None):
-    """
-    Create a stock comparison selector component.
-    
-    Args:
-        id (str, optional): Component ID
-        popular_stocks (list, optional): List of popular stock symbols to include
-        
-    Returns:
-        dash component: Comparison selector dropdown
-    """
     if popular_stocks is None:
         popular_stocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ', '^GSPC', '^DJI', '^IXIC']
     
@@ -202,12 +137,6 @@ def create_comparison_selector(id='comparison-selector', popular_stocks=None):
     ], className='comparison-selector-container')
 
 def create_control_panel():
-    """
-    Create a complete control panel with all selectors.
-    
-    Returns:
-        dash component: Control panel
-    """
     return dbc.Card([
         dbc.CardHeader("Dashboard Controls"),
         dbc.CardBody([
@@ -221,15 +150,6 @@ def create_control_panel():
     ], className='control-panel-card')
 
 def create_watchlist(stocks=None):
-    """
-    Create a watchlist component for tracking multiple stocks.
-    
-    Args:
-        stocks (list, optional): List of stock symbols to include in watchlist
-        
-    Returns:
-        dash component: Watchlist
-    """
     if stocks is None:
         stocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META']
     

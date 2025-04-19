@@ -1,8 +1,3 @@
-"""
-Main layout module for the Stock Market Dashboard.
-This module defines the main dashboard layout and UI components.
-"""
-
 import dash
 from dash import dcc, html
 import dash_bootstrap_components as dbc
@@ -10,29 +5,13 @@ import plotly.graph_objects as go
 from datetime import datetime
 
 def create_header():
-    """
-    Create the dashboard header.
-    
-    Returns:
-        dash component: Header component
-    """
     return html.Div([
-        html.H1("Stock Market Dashboard", className="dashboard-title"),
+        html.H1("Myles' Stock Market Dashboard", className="dashboard-title"),
         html.P("Real-time stock data visualization and analysis", className="dashboard-subtitle"),
         html.Hr()
     ], className="dashboard-header")
 
 def create_info_card(title, id_prefix):
-    """
-    Create an information card for displaying stock metrics.
-    
-    Args:
-        title (str): Card title
-        id_prefix (str): Prefix for component IDs
-        
-    Returns:
-        dash component: Info card
-    """
     return dbc.Card([
         dbc.CardHeader(title),
         dbc.CardBody([
@@ -64,17 +43,6 @@ def create_info_card(title, id_prefix):
     ], className="info-card")
 
 def create_chart_card(title, chart_id, height=500):
-    """
-    Create a card containing a chart.
-    
-    Args:
-        title (str): Card title
-        chart_id (str): ID for the chart component
-        height (int, optional): Chart height
-        
-    Returns:
-        dash component: Chart card
-    """
     return dbc.Card([
         dbc.CardHeader(title),
         dbc.CardBody([
@@ -92,12 +60,6 @@ def create_chart_card(title, chart_id, height=500):
     ], className="chart-card")
 
 def create_indicators_card():
-    """
-    Create a card containing technical indicators.
-    
-    Returns:
-        dash component: Indicators card
-    """
     return dbc.Card([
         dbc.CardHeader("Technical Indicators"),
         dbc.CardBody([
@@ -131,12 +93,6 @@ def create_indicators_card():
     ], className="indicators-card")
 
 def create_dashboard_layout():
-    """
-    Create the main dashboard layout.
-    
-    Returns:
-        dash component: Main dashboard layout
-    """
     # Import components here to avoid circular imports
     from components.stock_selector import create_control_panel, create_watchlist
     from components.prediction import create_prediction_card

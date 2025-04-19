@@ -1,8 +1,3 @@
-"""
-Prediction component for the Stock Market Dashboard.
-This module provides functions to create prediction UI elements.
-"""
-
 import dash
 from dash import dcc, html, callback, Input, Output, State
 import dash_bootstrap_components as dbc
@@ -13,12 +8,6 @@ from datetime import datetime
 from data.predictor import StockPredictor, create_prediction_chart
 
 def create_prediction_card():
-    """
-    Create a prediction card component.
-    
-    Returns:
-        dash component: Prediction card
-    """
     return dbc.Card([
         dbc.CardHeader([
             html.H5("Price Prediction (XGBoost)", className="d-inline"),
@@ -98,12 +87,6 @@ def create_prediction_card():
     ], className="prediction-card")
 
 def register_prediction_callbacks(app):
-    """
-    Register callbacks for the prediction component.
-    
-    Args:
-        app: Dash application instance
-    """
     # Initialize predictor
     predictor = StockPredictor()
     
@@ -125,19 +108,6 @@ def register_prediction_callbacks(app):
         ]
     )
     def update_prediction(predict_clicks, train_clicks, stock_data, forecast_days, confidence_level):
-        """
-        Update the prediction chart and metrics.
-        
-        Args:
-            predict_clicks (int): Number of predict button clicks
-            train_clicks (int): Number of train button clicks
-            stock_data (dict): Stock data from data store
-            forecast_days (int): Number of days to forecast
-            confidence_level (str): Confidence level for prediction intervals
-            
-        Returns:
-            tuple: (figure, metrics_html, model_status)
-        """
         if not stock_data:
             return go.Figure(), html.Div("No data available for prediction"), "No model trained"
         

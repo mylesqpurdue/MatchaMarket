@@ -1,8 +1,3 @@
-"""
-Stock price prediction module using XGBoost for the Stock Market Dashboard.
-This module provides functions to train models and predict future stock prices.
-"""
-
 import numpy as np
 import pandas as pd
 import xgboost as xgb

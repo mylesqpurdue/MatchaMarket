@@ -1,8 +1,3 @@
-"""
-Main application file for the Stock Market Dashboard.
-This module integrates all components and handles the application logic.
-"""
-
 import os
 import sys
 import json
@@ -54,18 +49,6 @@ register_prediction_callbacks(app)
     ]
 )
 def update_stock_data(symbol, timeframe, interval, n_intervals):
-    """
-    Fetch and store stock data based on user selections.
-    
-    Args:
-        symbol (str): Stock symbol
-        timeframe (str): Selected timeframe
-        interval (str): Selected interval
-        n_intervals (int): Number of refresh intervals
-        
-    Returns:
-        dict: JSON-serialized stock data
-    """
     if not symbol:
         symbol = "AAPL"  # Default symbol
     
@@ -110,18 +93,6 @@ def update_stock_data(symbol, timeframe, interval, n_intervals):
     ]
 )
 def update_comparison_data(symbols, timeframe, interval, n_intervals):
-    """
-    Fetch and store comparison stock data.
-    
-    Args:
-        symbols (list): List of stock symbols for comparison
-        timeframe (str): Selected timeframe
-        interval (str): Selected interval
-        n_intervals (int): Number of refresh intervals
-        
-    Returns:
-        dict: JSON-serialized comparison data
-    """
     if not symbols or not isinstance(symbols, list):
         return {}
     
@@ -160,18 +131,6 @@ def update_comparison_data(symbols, timeframe, interval, n_intervals):
     ]
 )
 def update_price_chart(stock_data, comparison_data, chart_type, indicators):
-    """
-    Update the price chart based on stock data and user selections.
-    
-    Args:
-        stock_data (dict): Stock data from data store
-        comparison_data (dict): Comparison data from data store
-        chart_type (str): Selected chart type
-        indicators (list): Selected technical indicators
-        
-    Returns:
-        plotly.graph_objects.Figure: Updated price chart
-    """
     if not stock_data:
         # Return empty figure if no data
         return go.Figure()
@@ -237,16 +196,6 @@ def update_price_chart(stock_data, comparison_data, chart_type, indicators):
     ]
 )
 def update_volume_chart(stock_data, indicators):
-    """
-    Update the volume chart based on stock data.
-    
-    Args:
-        stock_data (dict): Stock data from data store
-        indicators (list): Selected technical indicators
-        
-    Returns:
-        plotly.graph_objects.Figure: Updated volume chart
-    """
     if not stock_data or not indicators or 'volume' not in indicators:
         # Return empty figure if no data or volume not selected
         return go.Figure()
@@ -276,16 +225,6 @@ def update_volume_chart(stock_data, indicators):
     ]
 )
 def update_rsi_chart(stock_data, indicators):
-    """
-    Update the RSI chart based on stock data.
-    
-    Args:
-        stock_data (dict): Stock data from data store
-        indicators (list): Selected technical indicators
-        
-    Returns:
-        plotly.graph_objects.Figure: Updated RSI chart
-    """
     if not stock_data or not indicators or 'rsi' not in indicators:
         # Return empty figure if no data or RSI not selected
         return go.Figure()
@@ -315,16 +254,6 @@ def update_rsi_chart(stock_data, indicators):
     ]
 )
 def update_macd_chart(stock_data, indicators):
-    """
-    Update the MACD chart based on stock data.
-    
-    Args:
-        stock_data (dict): Stock data from data store
-        indicators (list): Selected technical indicators
-        
-    Returns:
-        plotly.graph_objects.Figure: Updated MACD chart
-    """
     if not stock_data or not indicators or 'macd' not in indicators:
         # Return empty figure if no data or MACD not selected
         return go.Figure()
@@ -354,16 +283,6 @@ def update_macd_chart(stock_data, indicators):
     ]
 )
 def update_stochastic_chart(stock_data, indicators):
-    """
-    Update the stochastic oscillator chart based on stock data.
-    
-    Args:
-        stock_data (dict): Stock data from data store
-        indicators (list): Selected technical indicators
-        
-    Returns:
-        plotly.graph_objects.Figure: Updated stochastic chart
-    """
     if not stock_data:
         # Return empty figure if no data
         return go.Figure()
@@ -400,15 +319,6 @@ def update_stochastic_chart(stock_data, indicators):
     ]
 )
 def update_stock_info(stock_data):
-    """
-    Update the stock information card.
-    
-    Args:
-        stock_data (dict): Stock data from data store
-        
-    Returns:
-        tuple: Updated stock information values and styles
-    """
     if not stock_data or 'data' not in stock_data or not stock_data['data']:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "info-value"
     
@@ -451,15 +361,6 @@ def update_stock_info(stock_data):
     ]
 )
 def update_last_updated_time(n_intervals):
-    """
-    Update the last updated time display.
-    
-    Args:
-        n_intervals (int): Number of refresh intervals
-        
-    Returns:
-        str: Formatted current time
-    """
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -475,17 +376,6 @@ def update_last_updated_time(n_intervals):
     ]
 )
 def add_stock_to_watchlist(n_clicks, stock_symbol, current_options):
-    """
-    Add a stock to the watchlist dropdown.
-    
-    Args:
-        n_clicks (int): Number of button clicks
-        stock_symbol (str): Stock symbol to add
-        current_options (list): Current dropdown options
-        
-    Returns:
-        list: Updated dropdown options
-    """
     if n_clicks is None or not stock_symbol:
         return current_options
     

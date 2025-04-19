@@ -9,46 +9,12 @@ import pandas as pd
 import numpy as np
 
 def calculate_moving_average(df, period=20, price_col='close'):
-    """
-    Calculate moving average for a given period.
-    
-    Args:
-        df (pandas.DataFrame): DataFrame with price data
-        period (int): Period for moving average calculation
-        price_col (str): Column name for price data
-        
-    Returns:
-        pandas.Series: Moving average series
-    """
     return df[price_col].rolling(window=period).mean()
 
 def calculate_exponential_moving_average(df, period=20, price_col='close'):
-    """
-    Calculate exponential moving average for a given period.
-    
-    Args:
-        df (pandas.DataFrame): DataFrame with price data
-        period (int): Period for EMA calculation
-        price_col (str): Column name for price data
-        
-    Returns:
-        pandas.Series: EMA series
-    """
     return df[price_col].ewm(span=period, adjust=False).mean()
 
 def calculate_bollinger_bands(df, period=20, std_dev=2, price_col='close'):
-    """
-    Calculate Bollinger Bands.
-    
-    Args:
-        df (pandas.DataFrame): DataFrame with price data
-        period (int): Period for moving average calculation
-        std_dev (int): Number of standard deviations
-        price_col (str): Column name for price data
-        
-    Returns:
-        tuple: (middle band, upper band, lower band)
-    """
     middle_band = calculate_moving_average(df, period, price_col)
     std = df[price_col].rolling(window=period).std()
     upper_band = middle_band + (std * std_dev)
@@ -57,17 +23,6 @@ def calculate_bollinger_bands(df, period=20, std_dev=2, price_col='close'):
     return middle_band, upper_band, lower_band
 
 def calculate_rsi(df, period=14, price_col='close'):
-    """
-    Calculate Relative Strength Index (RSI).
-    
-    Args:
-        df (pandas.DataFrame): DataFrame with price data
-        period (int): Period for RSI calculation
-        price_col (str): Column name for price data
-        
-    Returns:
-        pandas.Series: RSI series
-    """
     # Calculate price changes
     delta = df[price_col].diff()
     
@@ -86,19 +41,6 @@ def calculate_rsi(df, period=14, price_col='close'):
     return rsi
 
 def calculate_macd(df, fast_period=12, slow_period=26, signal_period=9, price_col='close'):
-    """
-    Calculate Moving Average Convergence Divergence (MACD).
-    
-    Args:
-        df (pandas.DataFrame): DataFrame with price data
-        fast_period (int): Period for fast EMA
-        slow_period (int): Period for slow EMA
-        signal_period (int): Period for signal line
-        price_col (str): Column name for price data
-        
-    Returns:
-        tuple: (MACD line, signal line, histogram)
-    """
     # Calculate fast and slow EMAs
     fast_ema = calculate_exponential_moving_average(df, fast_period, price_col)
     slow_ema = calculate_exponential_moving_average(df, slow_period, price_col)
@@ -115,19 +57,6 @@ def calculate_macd(df, fast_period=12, slow_period=26, signal_period=9, price_co
     return macd_line, signal_line, histogram
 
 def create_rsi_chart(stock_data, period=14, height=300, overbought=70, oversold=30):
-    """
-    Create an RSI chart.
-    
-    Args:
-        stock_data (dict): Processed stock data from the fetcher module
-        period (int, optional): Period for RSI calculation
-        height (int, optional): Chart height in pixels
-        overbought (int, optional): Overbought level
-        oversold (int, optional): Oversold level
-        
-    Returns:
-        plotly.graph_objects.Figure: RSI chart
-    """
     # Extract data
     df = stock_data['data']
     symbol = stock_data['symbol']
@@ -205,19 +134,6 @@ def create_rsi_chart(stock_data, period=14, height=300, overbought=70, oversold=
     return fig
 
 def create_macd_chart(stock_data, fast_period=12, slow_period=26, signal_period=9, height=300):
-    """
-    Create a MACD chart.
-    
-    Args:
-        stock_data (dict): Processed stock data from the fetcher module
-        fast_period (int, optional): Period for fast EMA
-        slow_period (int, optional): Period for slow EMA
-        signal_period (int, optional): Period for signal line
-        height (int, optional): Chart height in pixels
-        
-    Returns:
-        plotly.graph_objects.Figure: MACD chart
-    """
     # Extract data
     df = stock_data['data']
     symbol = stock_data['symbol']
@@ -282,18 +198,6 @@ def create_macd_chart(stock_data, fast_period=12, slow_period=26, signal_period=
     return fig
 
 def create_stochastic_oscillator(stock_data, k_period=14, d_period=3, height=300):
-    """
-    Create a Stochastic Oscillator chart.
-    
-    Args:
-        stock_data (dict): Processed stock data from the fetcher module
-        k_period (int, optional): Period for %K line
-        d_period (int, optional): Period for %D line
-        height (int, optional): Chart height in pixels
-        
-    Returns:
-        plotly.graph_objects.Figure: Stochastic Oscillator chart
-    """
     # Extract data
     df = stock_data['data']
     symbol = stock_data['symbol']
@@ -373,16 +277,6 @@ def create_stochastic_oscillator(stock_data, k_period=14, d_period=3, height=300
     return fig
 
 def create_technical_dashboard(stock_data, height=800):
-    """
-    Create a comprehensive technical analysis dashboard.
-    
-    Args:
-        stock_data (dict): Processed stock data from the fetcher module
-        height (int, optional): Chart height in pixels
-        
-    Returns:
-        plotly.graph_objects.Figure: Technical dashboard
-    """
     # Extract data
     df = stock_data['data']
     symbol = stock_data['symbol']

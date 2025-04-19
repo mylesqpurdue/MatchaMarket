@@ -1,8 +1,3 @@
-"""
-Stock watchlist component for the Stock Market Dashboard.
-This module provides functions to create and manage a stock watchlist.
-"""
-
 import dash
 from dash import dcc, html, callback, Input, Output, State
 import dash_bootstrap_components as dbc
@@ -22,15 +17,6 @@ class StockWatchlist:
         self.data_fetcher = StockDataFetcher()
     
     def add_stock(self, symbol):
-        """
-        Add a stock to the watchlist.
-        
-        Args:
-            symbol (str): Stock symbol to add
-            
-        Returns:
-            bool: True if added successfully, False otherwise
-        """
         if not symbol or symbol.upper() in self.stocks:
             return False
         
@@ -46,36 +32,15 @@ class StockWatchlist:
         return False
     
     def remove_stock(self, symbol):
-        """
-        Remove a stock from the watchlist.
-        
-        Args:
-            symbol (str): Stock symbol to remove
-            
-        Returns:
-            bool: True if removed successfully, False otherwise
-        """
         if symbol in self.stocks:
             self.stocks.remove(symbol)
             return True
         return False
     
     def get_stocks(self):
-        """
-        Get the current watchlist stocks.
-        
-        Returns:
-            list: List of stock symbols
-        """
         return self.stocks
     
     def get_watchlist_data(self):
-        """
-        Get data for all stocks in the watchlist.
-        
-        Returns:
-            dict: Dictionary of stock data keyed by symbol
-        """
         data = {}
         for symbol in self.stocks:
             try:
@@ -88,18 +53,6 @@ class StockWatchlist:
         return data
 
 def create_watchlist_item(symbol, price, change, change_pct):
-    """
-    Create a watchlist item component.
-    
-    Args:
-        symbol (str): Stock symbol
-        price (float): Current price
-        change (float): Price change
-        change_pct (float): Percentage change
-        
-    Returns:
-        dash component: Watchlist item
-    """
     # Determine color based on change
     color = "success" if change >= 0 else "danger"
     change_icon = "▲" if change >= 0 else "▼"
@@ -125,15 +78,6 @@ def create_watchlist_item(symbol, price, change, change_pct):
     ], className="watchlist-item")
 
 def create_watchlist_content(watchlist_data):
-    """
-    Create the watchlist content component.
-    
-    Args:
-        watchlist_data (dict): Dictionary of stock data keyed by symbol
-        
-    Returns:
-        dash component: Watchlist content
-    """
     if not watchlist_data:
         return html.Div("No stocks in watchlist", className="text-muted")
     
@@ -159,12 +103,6 @@ def create_watchlist_content(watchlist_data):
     return dbc.ListGroup(items, className="watchlist-items")
 
 def create_watchlist_card():
-    """
-    Create a watchlist card component.
-    
-    Returns:
-        dash component: Watchlist card
-    """
     return dbc.Card([
         dbc.CardHeader([
             html.H5("Watchlist", className="d-inline"),
@@ -197,12 +135,6 @@ def create_watchlist_card():
     ], className="watchlist-card")
 
 def register_watchlist_callbacks(app):
-    """
-    Register callbacks for the watchlist component.
-    
-    Args:
-        app: Dash application instance
-    """
     # Initialize watchlist
     watchlist = StockWatchlist()
     
@@ -219,18 +151,7 @@ def register_watchlist_callbacks(app):
         ]
     )
     def update_watchlist(refresh_clicks, add_clicks, n_intervals, new_symbol):
-        """
-        Update the watchlist content.
-        
-        Args:
-            refresh_clicks (int): Number of refresh button clicks
-            add_clicks (int): Number of add button clicks
-            n_intervals (int): Number of refresh intervals
-            new_symbol (str): New symbol to add
-            
-        Returns:
-            dash component: Updated watchlist content
-        """
+
         ctx = dash.callback_context
         
         # Check which input triggered the callback
@@ -258,16 +179,6 @@ def register_watchlist_callbacks(app):
         ]
     )
     def clear_input(n_clicks, value):
-        """
-        Clear the input field after adding a stock.
-        
-        Args:
-            n_clicks (int): Number of button clicks
-            value (str): Current input value
-            
-        Returns:
-            str: Empty string
-        """
         if n_clicks and value:
             return ""
         return value
@@ -282,16 +193,6 @@ def register_watchlist_callbacks(app):
             prevent_initial_call=True
         )
         def remove_stock(n_clicks, symbol=symbol):
-            """
-            Remove a stock from the watchlist.
-            
-            Args:
-                n_clicks (int): Number of button clicks
-                symbol (str): Stock symbol to remove
-                
-            Returns:
-                dash component: Updated watchlist content
-            """
             if n_clicks:
                 watchlist.remove_stock(symbol)
                 

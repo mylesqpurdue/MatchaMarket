@@ -1,26 +1,9 @@
-"""
-Volume chart component for the Stock Market Dashboard.
-This module provides functions to create interactive volume charts using Plotly.
-"""
-
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 
 def create_volume_chart(stock_data, title=None, height=300, standalone=True):
-    """
-    Create an interactive volume chart for stock data.
-    
-    Args:
-        stock_data (dict): Processed stock data from the fetcher module
-        title (str, optional): Chart title
-        height (int, optional): Chart height in pixels
-        standalone (bool, optional): Whether this is a standalone chart or part of another chart
-        
-    Returns:
-        plotly.graph_objects.Figure: Interactive volume chart
-    """
     # Extract data
     df = stock_data['data']
     symbol = stock_data['symbol']
@@ -71,18 +54,6 @@ def create_volume_chart(stock_data, title=None, height=300, standalone=True):
     return fig
 
 def create_volume_profile(stock_data, title=None, height=500, bins=50):
-    """
-    Create a volume profile chart showing volume distribution by price level.
-    
-    Args:
-        stock_data (dict): Processed stock data from the fetcher module
-        title (str, optional): Chart title
-        height (int, optional): Chart height in pixels
-        bins (int, optional): Number of price bins for volume distribution
-        
-    Returns:
-        plotly.graph_objects.Figure: Volume profile chart
-    """
     # Extract data
     df = stock_data['data']
     symbol = stock_data['symbol']
@@ -169,18 +140,6 @@ def create_volume_profile(stock_data, title=None, height=500, bins=50):
     return fig
 
 def create_volume_by_price_chart(stock_data, title=None, height=400, bins=20):
-    """
-    Create a horizontal bar chart showing volume by price level.
-    
-    Args:
-        stock_data (dict): Processed stock data from the fetcher module
-        title (str, optional): Chart title
-        height (int, optional): Chart height in pixels
-        bins (int, optional): Number of price bins for volume distribution
-        
-    Returns:
-        plotly.graph_objects.Figure: Volume by price chart
-    """
     # Extract data
     df = stock_data['data']
     symbol = stock_data['symbol']
@@ -267,18 +226,6 @@ def create_volume_by_price_chart(stock_data, title=None, height=400, bins=20):
     return fig
 
 def create_volume_comparison_chart(stock_data_dict, title="Volume Comparison", height=400, normalize=True):
-    """
-    Create a chart comparing trading volumes of multiple stocks.
-    
-    Args:
-        stock_data_dict (dict): Dictionary of processed stock data keyed by symbol
-        title (str, optional): Chart title
-        height (int, optional): Chart height in pixels
-        normalize (bool, optional): Whether to normalize volumes to percentage of average
-        
-    Returns:
-        plotly.graph_objects.Figure: Volume comparison chart
-    """
     # Create figure
     fig = go.Figure()
     
