@@ -4,6 +4,7 @@ import json
 import pandas as pd
 from datetime import datetime
 
+
 import dash
 from dash import dcc, html, callback, Input, Output, State
 import dash_bootstrap_components as dbc
@@ -93,17 +94,16 @@ def update_stock_data(symbol, timeframe, interval, n_intervals):
         Input("interval-component", "n_intervals")
     ]
 )
+
 def update_comparison_data(symbols, timeframe, interval, n_intervals):
     if not symbols or not isinstance(symbols, list):
         return {}
-    
+
     if not timeframe:
-        timeframe = "1mo"  # Default timeframe
-    
+        timeframe = "1mo"
     if not interval:
-        interval = "1d"  # Default interval
-    
-    # Fetch data for each comparison symbol
+        interval = "1d"
+
     comparison_data = {}
     for symbol in symbols:
         stock_data = data_fetcher.get_stock_chart(
@@ -111,15 +111,28 @@ def update_comparison_data(symbols, timeframe, interval, n_intervals):
             interval=interval,
             range=timeframe
         )
-        
-        # Convert DataFrame to JSON-serializable format
+
         if stock_data and 'data' in stock_data:
-            # Convert DataFrame index to string for JSON serialization
-            df_dict = stock_data['data'].reset_index().to_dict('records')
-            stock_data['data'] = df_dict
-            comparison_data[symbol] = stock_data
-    
+            raw = stock_data['data']
+
+            if isinstance(raw, pd.DataFrame):
+                # Reset the index and convert to list of dicts
+                df = raw.reset_index()
+                stock_data['data'] = df.to_dict('records')
+
+            elif isinstance(raw, list):
+                # Already JSON-serializable
+                stock_data['data'] = raw
+
+            else:
+                # Fallback: coerce into a DataFrame then serialize
+                df = pd.DataFrame(raw)
+                stock_data['data'] = df.reset_index().to_dict('records')
+
+        comparison_data[symbol] = stock_data
+
     return comparison_data
+
 
 # Callback to update price chart
 @app.callback(

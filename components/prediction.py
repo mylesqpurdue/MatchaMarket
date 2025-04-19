@@ -79,7 +79,7 @@ def create_prediction_card():
                 ]
             ),
             
-            html.Div(style={"height": "30px"}),  # Spacer
+            html.Div(style={"height": "100px"}),  # Spacer
             
             # Prediction metrics
             html.Div(id="prediction-metrics", className="prediction-metrics")
