@@ -59,6 +59,16 @@ def calculate_macd(df, fast_period=12, slow_period=26, signal_period=9, price_co
 def create_rsi_chart(stock_data, period=14, height=300, overbought=70, oversold=30):
     # Extract data
     df = stock_data['data']
+
+    if isinstance(df, list):
+        df = pd.DataFrame(df)
+
+        for timecol in ('datetime', 'Datetime', 'Date', 'date', 'index'):
+            if timecol in df.columns:
+                df[timecol] = pd.to_datetime(df[timecol])
+                df.set_index(timecol, inplace = True)
+                break
+
     symbol = stock_data['symbol']
     
     # Calculate RSI
@@ -136,6 +146,15 @@ def create_rsi_chart(stock_data, period=14, height=300, overbought=70, oversold=
 def create_macd_chart(stock_data, fast_period=12, slow_period=26, signal_period=9, height=300):
     # Extract data
     df = stock_data['data']
+    
+    if isinstance(df, list):
+        df = pd.DataFrame(df)
+
+        for timecol in ('datetime', 'Datetime', 'Date', 'date', 'index'):
+            if timecol in df.columns:
+                df[timecol] = pd.to_datetime(df[timecol])
+                df.set_index(timecol, inplace = True)
+                break
     symbol = stock_data['symbol']
     
     # Calculate MACD
