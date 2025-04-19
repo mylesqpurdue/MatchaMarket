@@ -14,6 +14,13 @@ A Python-based stock market dashboard that fetches real-time data, displays inte
 - Customizable timeframes and data display options
 - Responsive design for desktop and mobile
 
+## Machine Learning Forecasts
+- XGBoost regression on engineered features (lagged close, rolling stats, momentum, volatility, RSI, MACD, volume metrics).
+
+- Targets modeled as next‑day returns, achieving 2.97 % RMSE on a 21‑day hold‑out—31 % improvement over the naive baseline (4.33 % RMSE).
+
+- Multi‑step forecasting with recomputed indicators for up to 5 days ahead.
+  
 ## Installation
 
 1. Clone the repository:
@@ -84,6 +91,20 @@ The dashboard includes an XGBoost-based prediction feature that:
   - `styles.css`: CSS styles
 - `models/`: Directory for storing trained models
 
+## Evaulation and & RMSE Testing 
+Created a standalone evaluation script to measure the model perfomance against naive baselines
+
+```python -m data.test_metrics```
+
+Code Adjustsments (To test returns instead of price)
+```  # Target variable (next day's closing price)
+        data['target'] = data['close'].shift(-1) //Comment this line out
+        
+        #data['target'] = data['close'].pct_change().shift(-1) //Uncomment this line
+        #FOR TESTING RSME
+```
+Located in lines 68 - 72 in predictor.py 
+
 ## Dependencies
 
 - dash
@@ -95,6 +116,12 @@ The dashboard includes an XGBoost-based prediction feature that:
 - scikit-learn
 - requests
 
+## Next Steps
+
+- Hyperparameter Tuning: time‑series cross‑validation with Optuna or scikit‑learn’s search.
+- Ensembling: stack XGBoost with ARIMA or linear models.
+- Deployment: containerize with Docker, deploy on AWS/Heroku, schedule automated retraining.
+  
 ## License
 
 MIT
