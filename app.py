@@ -67,19 +67,20 @@ def update_stock_data(symbol, timeframe, interval, n_intervals):
     
     # Convert DataFrame to JSON-serializable format
     if stock_data and 'data' in stock_data:
-        # Convert DataFrame index to string for JSON serialization
-        df_dict = stock_data['data'].reset_index().to_dict('records')
-        stock_data['data'] = df_dict
         raw = stock_data['data']
-        if isinstance(raw, list):
-            # Already a list of dicts: assume it’s JSON-serializable already
-            df_dict = raw
-        else:
-            # It’s still a DataFrame: reset_index and serialize
+
+        if isinstance(raw, pd.DataFrame):
+            # it’s a DataFrame → reset the index and serialize
             df = raw.reset_index()
-            df_dict = df.to_dict('records')
-        stock_data['data'] = df_dict
-    
+            stock_data['data'] = df.to_dict('records')
+        elif isinstance(raw, list):
+            # already a list of dicts → leave it as-is
+            stock_data['data'] = raw
+        else:
+            # unexpected type: try coercing to DataFrame
+            df = pd.DataFrame(raw).reset_index()
+            stock_data['data'] = df.to_dict('records')
+
     return stock_data
 
 # Callback to update comparison data
