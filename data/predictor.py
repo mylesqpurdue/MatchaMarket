@@ -13,12 +13,6 @@ class StockPredictor:
     """Class to predict stock prices using XGBoost."""
     
     def __init__(self, model_dir='/home/ubuntu/stock_dashboard/models'):
-        """
-        Initialize the StockPredictor.
-        
-        Args:
-            model_dir (str): Directory to store trained models
-        """
         self.model_dir = model_dir
         self.models = {}  # Cache for loaded models
         self.scalers = {}  # Cache for loaded scalers
@@ -28,15 +22,6 @@ class StockPredictor:
             os.makedirs(model_dir)
     
     def _create_features(self, df):
-        """
-        Create features for the prediction model.
-        
-        Args:
-            df (pandas.DataFrame): DataFrame with stock price data
-            
-        Returns:
-            pandas.DataFrame: DataFrame with features
-        """
         # Make a copy of the dataframe to avoid modifying the original
         data = df.copy()
         
@@ -88,17 +73,6 @@ class StockPredictor:
         return data
     
     def train_model(self, stock_data, symbol, forecast_days=5):
-        """
-        Train an XGBoost model for stock price prediction.
-        
-        Args:
-            stock_data (dict): Processed stock data from the fetcher module
-            symbol (str): Stock symbol
-            forecast_days (int): Number of days to forecast
-            
-        Returns:
-            dict: Training results and metrics
-        """
         # Extract DataFrame
         df = stock_data['data']
         
@@ -180,19 +154,6 @@ class StockPredictor:
         }
     
     def _generate_forecast(self, data, model, scaler, features, days=5):
-        """
-        Generate forecast for future days.
-        
-        Args:
-            data (pandas.DataFrame): DataFrame with features
-            model: Trained XGBoost model
-            scaler: Fitted StandardScaler
-            features (list): List of feature names
-            days (int): Number of days to forecast
-            
-        Returns:
-            pandas.DataFrame: DataFrame with forecasted prices
-        """
         # Get the last row of data
         last_data = data.iloc[-1:][features]
         
@@ -233,17 +194,6 @@ class StockPredictor:
         return forecast_df
     
     def predict(self, stock_data, symbol, days=5):
-        """
-        Predict future stock prices.
-        
-        Args:
-            stock_data (dict): Processed stock data from the fetcher module
-            symbol (str): Stock symbol
-            days (int): Number of days to forecast
-            
-        Returns:
-            dict: Prediction results
-        """
         # Check if model exists
         model_path = os.path.join(self.model_dir, f"{symbol}_model.pkl")
         scaler_path = os.path.join(self.model_dir, f"{symbol}_scaler.pkl")
@@ -289,18 +239,6 @@ class StockPredictor:
         }
 
 def create_prediction_chart(prediction_data, stock_data, title=None, height=400):
-    """
-    Create a prediction chart.
-    
-    Args:
-        prediction_data (dict): Prediction data from StockPredictor
-        stock_data (dict): Processed stock data from the fetcher module
-        title (str, optional): Chart title
-        height (int, optional): Chart height in pixels
-        
-    Returns:
-        plotly.graph_objects.Figure: Prediction chart
-    """
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
     
