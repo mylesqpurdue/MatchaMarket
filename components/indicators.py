@@ -1,8 +1,3 @@
-"""
-Technical indicators component for the Stock Market Dashboard.
-This module provides functions to calculate and visualize technical indicators.
-"""
-
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
