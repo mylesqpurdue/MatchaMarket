@@ -6,7 +6,7 @@ from datetime import datetime
 
 def create_header():
     return html.Div([
-        html.H1("Myles' Stock Market Dashboard", className="dashboard-title"),
+        html.H1("MatchaMarket", className="dashboard-title"),
         html.P("Real-time stock data visualization and analysis", className="dashboard-subtitle"),
         html.Hr()
     ], className="dashboard-header")
