@@ -97,13 +97,14 @@ Created a standalone evaluation script to measure the model perfomance against n
 ```python -m data.test_metrics```
 
 Code Adjustsments (To test returns instead of price)
-```  # Target variable (next day's closing price)
+```
+Located in lines 68 - 72 in predictor.py 
+ # Target variable (next day's closing price)
         data['target'] = data['close'].shift(-1) //Comment this line out
         
         #data['target'] = data['close'].pct_change().shift(-1) //Uncomment this line
         #FOR TESTING RSME
 ```
-Located in lines 68 - 72 in predictor.py 
 
 ## Dependencies
 
