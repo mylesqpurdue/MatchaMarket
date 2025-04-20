@@ -38,7 +38,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate or \venv\Scripts\A
 3. Install dependencies:
 ```bash
 pip install -r requirements.txt
-and another other depednacies need to run
+and  other dependencies need to run
 ```
 
 ## Usage
