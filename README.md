@@ -132,4 +132,4 @@ Free Use
 - Yahoo Finance API for stock data
 - Dash and Plotly for interactive visualizations
 - XGBoost for machine learning predictions
-- All of my friends
+- All of my friends in ENGR 133 ❤️
