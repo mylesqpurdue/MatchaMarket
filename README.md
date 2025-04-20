@@ -124,7 +124,7 @@ Located in lines 68 - 72 in predictor.py
   
 ## License
 
-MIT
+Free Use
 
 ## Acknowledgments
 
