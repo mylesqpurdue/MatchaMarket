@@ -1,4 +1,4 @@
-# MatchaMarket - A Stock Market Dashboard
+# 🍵MatchaMarket - A Stock Market Dashboard🍵
 
 A Python-based stock market dashboard that fetches real-time data, displays interactive charts, and uses XGBoost for price predictions.
 
