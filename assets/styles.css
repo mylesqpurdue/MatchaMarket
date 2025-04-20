@@ -1,10 +1,11 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Helvetica Neue', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f0f5ed;  /* light matcha green background */
     color: #26332e;             /* dark earthy green text */
 }
+
 
 .dashboard-container {
     padding: 20px;
@@ -35,7 +36,7 @@ body {
 .indicators-card,
 .info-card,
 .watchlist-card {
-    background-color: #ffffff;
+    background-color: #f0f5ed;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(38, 51, 46, 0.1);
     padding: 15px;
