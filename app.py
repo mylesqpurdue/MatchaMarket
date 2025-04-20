@@ -1,9 +1,8 @@
-
 """
 Course Number: ENGR 13300
 Semester: Spring 2025
 
-Description:
+DescSription:
     MatchaMarket, an Intuitive  Stock Dashboard
 
 Assignment Information:
