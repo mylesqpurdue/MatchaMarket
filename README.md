@@ -1,4 +1,4 @@
-# Stock Market Dashboard
+# 🍵MatchaMarket - A Stock Market Dashboard🍵
 
 A Python-based stock market dashboard that fetches real-time data, displays interactive charts, and uses XGBoost for price predictions.
 
@@ -38,7 +38,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate or \venv\Scripts\A
 3. Install dependencies:
 ```bash
 pip install -r requirements.txt
-and another other depednacies need to run
+and other dependencies need to run
 ```
 
 ## Usage
@@ -97,13 +97,14 @@ Created a standalone evaluation script to measure the model perfomance against n
 ```python -m data.test_metrics```
 
 Code Adjustsments (To test returns instead of price)
-```  # Target variable (next day's closing price)
+```
+Located in lines 68 - 72 in predictor.py 
+ # Target variable (next day's closing price)
         data['target'] = data['close'].shift(-1) //Comment this line out
         
         #data['target'] = data['close'].pct_change().shift(-1) //Uncomment this line
         #FOR TESTING RSME
 ```
-Located in lines 68 - 72 in predictor.py 
 
 ## Dependencies
 
@@ -131,4 +132,4 @@ Free Use
 - Yahoo Finance API for stock data
 - Dash and Plotly for interactive visualizations
 - XGBoost for machine learning predictions
-- All of my friends
+- All of my friends in ENGR 133 ❤️
