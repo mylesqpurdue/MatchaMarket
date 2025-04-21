@@ -14,8 +14,7 @@ class StockDataFetcher:
         self.cache = {}  # Simple in-memory cache
         self.cache_expiry = {}  # Track when cache entries expire
     
-    def get_stock_chart(self, symbol, interval='1d', range='1mo', region='US', 
-                        include_pre_post=False, include_adjusted_close=True):
+    def get_stock_chart(self, symbol, interval='1d', range='1mo', region='US', include_pre_post=False, include_adjusted_close=True):
         
         # Create cache key
         cache_key = f"chart_{symbol}_{interval}_{range}_{region}_{include_pre_post}_{include_adjusted_close}"

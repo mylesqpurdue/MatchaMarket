@@ -139,18 +139,7 @@ def create_candlestick_chart(stock_data, title=None, height=600, show_volume=Tru
     return fig
 
 def create_line_chart(stock_data, title=None, height=500, use_adjclose=True):
-    """
-    Create an interactive line chart for stock price data.
-    
-    Args:
-        stock_data (dict): Processed stock data from the fetcher module
-        title (str, optional): Chart title
-        height (int, optional): Chart height in pixels
-        use_adjclose (bool, optional): Whether to use adjusted close price
-        
-    Returns:
-        plotly.graph_objects.Figure: Interactive line chart
-    """
+
     # Extract data
     df = stock_data['data']
     symbol = stock_data['symbol']
@@ -194,19 +183,6 @@ def create_line_chart(stock_data, title=None, height=500, use_adjclose=True):
     return fig
 
 def create_comparison_chart(stock_data_dict, title="Stock Price Comparison", height=500, use_adjclose=True, normalize=True):
-    """
-    Create an interactive line chart comparing multiple stocks.
-    
-    Args:
-        stock_data_dict (dict): Dictionary of processed stock data keyed by symbol
-        title (str, optional): Chart title
-        height (int, optional): Chart height in pixels
-        use_adjclose (bool, optional): Whether to use adjusted close price
-        normalize (bool, optional): Whether to normalize prices to percentage change
-        
-    Returns:
-        plotly.graph_objects.Figure: Interactive comparison chart
-    """
     # Create figure
     fig = go.Figure()
     
@@ -256,19 +232,6 @@ def create_comparison_chart(stock_data_dict, title="Stock Price Comparison", hei
     return fig
 
 def add_moving_averages(fig, stock_data, periods=[20, 50, 200], row=1, col=1):
-    """
-    Add moving average lines to an existing chart.
-    
-    Args:
-        fig (plotly.graph_objects.Figure): Existing figure
-        stock_data (dict): Processed stock data from the fetcher module
-        periods (list, optional): List of periods for moving averages
-        row (int, optional): Row index for subplot
-        col (int, optional): Column index for subplot
-        
-    Returns:
-        plotly.graph_objects.Figure: Updated figure with moving averages
-    """
     # Extract data
     df = stock_data['data']
     
@@ -296,20 +259,6 @@ def add_moving_averages(fig, stock_data, periods=[20, 50, 200], row=1, col=1):
     return fig
 
 def add_bollinger_bands(fig, stock_data, period=20, std_dev=2, row=1, col=1):
-    """
-    Add Bollinger Bands to an existing chart.
-    
-    Args:
-        fig (plotly.graph_objects.Figure): Existing figure
-        stock_data (dict): Processed stock data from the fetcher module
-        period (int, optional): Period for moving average
-        std_dev (int, optional): Number of standard deviations
-        row (int, optional): Row index for subplot
-        col (int, optional): Column index for subplot
-        
-    Returns:
-        plotly.graph_objects.Figure: Updated figure with Bollinger Bands
-    """
     # Extract data
     df = stock_data['data']
     
