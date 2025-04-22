@@ -35,16 +35,22 @@ class StockDataFetcher:
                 if range in ['1d', '5d', '1wk']:
                     ticker_data = yf.Ticker(symbol)
                     df = ticker_data.history(period=range, interval=interval, prepost=include_pre_post)
+                    if isinstance(df.columns, pd.MultiIndex):
+                        df.columns = df.columns.get_level_values(0)
                 else:
                     # For longer ranges with intraday data, we need to limit to 60 days
                     end_date = datetime.now()
                     start_date = end_date - timedelta(days=60)
                     ticker_data = yf.Ticker(symbol)
                     df = ticker_data.history(start=start_date, end=end_date, interval=interval, prepost=include_pre_post)
+                    if isinstance(df.columns, pd.MultiIndex):
+                        df.columns = df.columns.get_level_values(0)
             else:
                 # For daily or longer intervals
                 ticker_data = yf.Ticker(symbol)
                 df = ticker_data.history(period=period, interval=interval, prepost=include_pre_post)
+                if isinstance(df.columns, pd.MultiIndex):
+                        df.columns = df.columns.get_level_values(0)
             
             # Get ticker info
             try:
@@ -73,7 +79,13 @@ class StockDataFetcher:
                 'Close': 'close',
                 'Volume': 'volume'
             })
-            
+            if "close" not in df.columns:
+                if "adjclose" in df.columns:        # created just below by your own code
+                    df["close"] = df["adjclose"]
+                else:
+                    raise ValueError("No 'close' (or 'adjclose') column returned for "
+                                    f"{symbol}. Cannot continue.")
+
             # Add timestamp column
             df['timestamp'] = [int(dt.timestamp()) for dt in df.index]
             

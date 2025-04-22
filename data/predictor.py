@@ -17,7 +17,7 @@ class StockPredictor:
         self.model_dir = model_dir
         self.models = {}  # Cache for loaded models
         self.scalers = {}  # Cache for loaded scalers
-        
+        self.last_rmse   = {} 
         # Create model directory if it doesn't exist
         if not os.path.exists(model_dir):
             os.makedirs(model_dir)
@@ -72,7 +72,7 @@ class StockPredictor:
         #FOR TESTING RSME
         
         # Drop NaN values
-        data = data.dropna()
+        data = data.dropna()  
         return data
     
 
@@ -116,6 +116,8 @@ class StockPredictor:
         data['lag1'] = data['close'].shift(1)
         data = data.dropna(subset=['lag1'])
 
+        if data[features].isna().any().any():
+            raise RuntimeError("Still got NaNs in features after dropna!")
         X = data[features]
         y = data['target']
 
@@ -139,6 +141,7 @@ class StockPredictor:
         y_pred = model.predict(X_test_s)
         mse  = mean_squared_error(y_test, y_pred)
         rmse = np.sqrt(mse)
+        self.last_rmse[symbol] = rmse
         mae  = mean_absolute_error(y_test, y_pred)
         r2   = r2_score(y_test, y_pred) if len(y_test) >= 2 else float('nan')
 
@@ -155,7 +158,8 @@ class StockPredictor:
             model=model,
             scaler=scaler,
             features=features,
-            days=forecast_days
+            days=forecast_days,
+            symbol=symbol
         )
 
         return {
@@ -169,7 +173,7 @@ class StockPredictor:
         }
 
 
-    def _generate_forecast(self, raw_df, model, scaler, features, days=5):
+    def _generate_forecast(self, raw_df, model, scaler, features, days=5, symbol=None):
         # 0) Pre‑flight
         if raw_df.empty:
             raise ValueError("Cannot forecast: raw_df is empty")
@@ -204,8 +208,17 @@ class StockPredictor:
 
             # 5) Record
             forecast_df.at[date, 'predicted_close'] = pred
-            forecast_df.at[date, 'lower_bound']     = pred * 0.95
-            forecast_df.at[date, 'upper_bound']     = pred * 1.05
+
+          # grab the RMSE you computed during training
+            rmse = self.last_rmse.get(symbol, np.nan)
+            if np.isnan(rmse):
+                # fallback to 5% band if something went wrong
+                delta = pred * 0.05
+            else:
+                # 95% CI ~ ±1.96×RMSE
+                delta = 1.96 * rmse
+            forecast_df.at[date, 'lower_bound'] = pred - delta
+            forecast_df.at[date, 'upper_bound'] = pred + delta
 
             # 6) Append to raw history for next step
             new = history.iloc[[-1]].copy()
@@ -272,7 +285,8 @@ class StockPredictor:
             model=model,
             scaler=scaler,
             features=features,
-            days=days
+            days=days,
+            symbol=symbol
         )
 
         return {

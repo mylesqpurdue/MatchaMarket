@@ -90,6 +90,8 @@ def update_stock_data(symbol, timeframe, interval, n_intervals):
     if not interval:
         interval = "1d"  # Default interval
     
+    if timeframe in (None, "", "1d", "5d", "1mo"):   # user picked too little
+        timeframe = "3mo" 
     # Fetch stock data
     stock_data = data_fetcher.get_stock_chart(
         symbol=symbol,
@@ -134,6 +136,7 @@ def update_comparison_data(symbols, timeframe, interval, n_intervals):
         timeframe = "1mo"
     if not interval:
         interval = "1d"
+        
 
     comparison_data = {}
     for symbol in symbols:
